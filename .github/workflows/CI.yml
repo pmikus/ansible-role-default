@@ -2,17 +2,19 @@
 name: Ansible CI
 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
   push:
-    branches: [master]
+    branches:
+      - main
   pull_request:
-    branches: [master]
+    branches:
+      - main
 
 defaults:
   run:
     working-directory: 'pmikus.FIXME'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   molecule:
     name: Molecule
@@ -20,19 +22,20 @@ jobs:
     strategy:
       matrix:
         distro:
+          - ubuntu-21.04
           - ubuntu-20.10
           - ubuntu-20.04
-          - ubuntu-18.04
     steps:
       - name: Check out the codebase.
         uses: actions/checkout@v2
         with:
           path: 'pmikus.FIXME'
+
       - name: Set up Python 3.
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-      - name: Install test dependencies.
+      - name: Install test pip dependencies.
         run: pip3 install ansible molecule[docker] docker
       - name: Run Molecule tests.
         run: molecule test
@@ -69,23 +72,10 @@ jobs:
           path: 'pmikus.FIXME'
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@v1.6
         with:
           args: >
             -Dsonar.projectVersion=${{ github.ref }}_${{ github.run_number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  galaxy:
-    # Ensure test job passes before pushing image.
-    needs: molecule
-
-    name: GalaxyAnsible
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Ansible Galaxy Role Importer
-        uses: hspaans/ansible-galaxy-action@v0.2.8
-        with:
-          api_key: ${{ secrets.GALAXY_TOKEN }}
