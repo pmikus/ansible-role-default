@@ -1,19 +1,21 @@
 ---
-# file: meta/main.yaml
+# file: meta/main.yml
 
 dependencies: []
 
 galaxy_info:
-  role_name: FIXME
-  author: pmikus
-  description: FIXME for Linux.
-  company: none
+  role_name: "FIXME"
+  author: "pmikus"
+  description: "FIXME for Linux."
+  company: "none"
   license: "license (BSD, MIT)"
-  min_ansible_version: 2.9
+  min_ansible_version: "2.9"
   platforms:
-    - name: Ubuntu
+    - name: "Debian"
       versions:
-        - focal
-        - jammy
+        - "bookworm"
+    - name: "Ubuntu"
+      versions:
+        - "jammy"
   galaxy_tags:
-    - FIXME
+    - "FIXME"
